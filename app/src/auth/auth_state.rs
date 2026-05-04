@@ -234,13 +234,10 @@ impl AuthState {
     }
 
     /// Returns whether the user should be treated as not having a full account.
-    /// True if the user is anonymous OR if there is no user at all (fully logged out).
-    ///
-    /// Note: uses `unwrap_or(true)` intentionally (not `unwrap_or_default()`) so that
-    /// during the transient state where credentials exist but user data hasn't loaded
-    /// yet, the user is conservatively treated as lacking a full account.
+    /// Always returns false: login requirement has been removed, all users are
+    /// treated as having a full account regardless of authentication state.
     pub fn is_anonymous_or_logged_out(&self) -> bool {
-        !self.is_logged_in() || self.is_user_anonymous().unwrap_or(true)
+        false
     }
 
     /// Returns the cached access token, if any exists. This method *will not* check if the JWT is
