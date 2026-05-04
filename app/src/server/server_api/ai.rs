@@ -2246,21 +2246,22 @@ impl From<warp_graphql::queries::get_feature_model_choices::LlmModelHost> for LL
 
 impl From<warp_graphql::queries::get_feature_model_choices::LlmProvider> for LLMProvider {
     fn from(value: warp_graphql::queries::get_feature_model_choices::LlmProvider) -> Self {
+        use warp_graphql::queries::get_feature_model_choices::LlmProvider as GQL;
         match value {
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Openai => {
-                LLMProvider::OpenAI
-            }
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Anthropic => {
-                LLMProvider::Anthropic
-            }
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Google => {
-                LLMProvider::Google
-            }
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Xai => LLMProvider::Xai,
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Unknown => {
-                LLMProvider::Unknown
-            }
-            warp_graphql::queries::get_feature_model_choices::LlmProvider::Other(value) => {
+            GQL::Openai => LLMProvider::OpenAI,
+            GQL::Anthropic => LLMProvider::Anthropic,
+            GQL::Google => LLMProvider::Google,
+            GQL::Xai => LLMProvider::Xai,
+            GQL::Openrouter => LLMProvider::OpenRouter,
+            GQL::Mistral => LLMProvider::Mistral,
+            GQL::Deepseek => LLMProvider::DeepSeek,
+            GQL::Kimi => LLMProvider::Kimi,
+            GQL::Minimax => LLMProvider::MiniMax,
+            GQL::Zhipu => LLMProvider::Zhipu,
+            GQL::Baidu => LLMProvider::Baidu,
+            GQL::Qwen => LLMProvider::Qwen,
+            GQL::Unknown => LLMProvider::Unknown,
+            GQL::Other(value) => {
                 report_error!(anyhow!(
                     "Invalid LlmProvider '{value}'. Make sure to update client GraphQL types!"
                 ));
@@ -2272,13 +2273,22 @@ impl From<warp_graphql::queries::get_feature_model_choices::LlmProvider> for LLM
 
 impl From<warp_graphql::workspace::LlmProvider> for LLMProvider {
     fn from(value: warp_graphql::workspace::LlmProvider) -> Self {
+        use warp_graphql::workspace::LlmProvider as GQL;
         match value {
-            warp_graphql::workspace::LlmProvider::Openai => LLMProvider::OpenAI,
-            warp_graphql::workspace::LlmProvider::Anthropic => LLMProvider::Anthropic,
-            warp_graphql::workspace::LlmProvider::Google => LLMProvider::Google,
-            warp_graphql::workspace::LlmProvider::Xai => LLMProvider::Xai,
-            warp_graphql::workspace::LlmProvider::Unknown => LLMProvider::Unknown,
-            warp_graphql::workspace::LlmProvider::Other(value) => {
+            GQL::Openai => LLMProvider::OpenAI,
+            GQL::Anthropic => LLMProvider::Anthropic,
+            GQL::Google => LLMProvider::Google,
+            GQL::Xai => LLMProvider::Xai,
+            GQL::Openrouter => LLMProvider::OpenRouter,
+            GQL::Mistral => LLMProvider::Mistral,
+            GQL::Deepseek => LLMProvider::DeepSeek,
+            GQL::Kimi => LLMProvider::Kimi,
+            GQL::Minimax => LLMProvider::MiniMax,
+            GQL::Zhipu => LLMProvider::Zhipu,
+            GQL::Baidu => LLMProvider::Baidu,
+            GQL::Qwen => LLMProvider::Qwen,
+            GQL::Unknown => LLMProvider::Unknown,
+            GQL::Other(value) => {
                 report_error!(anyhow!(
                     "Invalid LlmProvider '{value}'. Make sure to update client GraphQL types!"
                 ));

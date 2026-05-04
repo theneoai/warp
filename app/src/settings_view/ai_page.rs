@@ -6304,9 +6304,23 @@ impl SettingsWidget for CloudAgentComputerUseWidget {
 }
 
 struct ApiKeysWidget {
+    // International providers
     openai_api_key_editor: ViewHandle<EditorView>,
     anthropic_api_key_editor: ViewHandle<EditorView>,
     google_api_key_editor: ViewHandle<EditorView>,
+    open_router_api_key_editor: ViewHandle<EditorView>,
+    mistral_api_key_editor: ViewHandle<EditorView>,
+    // Chinese providers
+    deepseek_api_key_editor: ViewHandle<EditorView>,
+    kimi_api_key_editor: ViewHandle<EditorView>,
+    minimax_api_key_editor: ViewHandle<EditorView>,
+    zhipu_api_key_editor: ViewHandle<EditorView>,
+    baidu_api_key_editor: ViewHandle<EditorView>,
+    qwen_api_key_editor: ViewHandle<EditorView>,
+    // Custom OpenAI-compatible provider
+    custom_api_key_editor: ViewHandle<EditorView>,
+    custom_base_url_editor: ViewHandle<EditorView>,
+    custom_provider_name_editor: ViewHandle<EditorView>,
 
     can_use_warp_credits_with_byok: SwitchStateHandle,
     upgrade_highlight_index: HighlightedHyperlink,
@@ -6323,17 +6337,31 @@ impl ApiKeysWidget {
             openai: openai_key,
             anthropic: anthropic_key,
             google: google_key,
-            ..
+            open_router: open_router_key,
+            mistral: mistral_key,
+            deepseek: deepseek_key,
+            kimi: kimi_key,
+            minimax: minimax_key,
+            zhipu: zhipu_key,
+            baidu: baidu_key,
+            qwen: qwen_key,
+            custom_api_key: custom_api_key_val,
+            custom_base_url: custom_base_url_val,
+            custom_provider_name: custom_provider_name_val,
         } = ApiKeyManager::as_ref(ctx).keys().clone();
 
         // A helper macro to create and configure an API key editor.  This avoids a lot
         // of code duplication and ensures consistency between the editors.
+        // Use is_password=true for sensitive keys and false for plain-text fields.
         macro_rules! create_api_key_editor {
             ($editor:ident, $key:ident, $set_func:ident, $placeholder:literal) => {
+                create_api_key_editor!($editor, $key, $set_func, $placeholder, true)
+            };
+            ($editor:ident, $key:ident, $set_func:ident, $placeholder:literal, $is_password:expr) => {
                 let $editor = ctx.add_typed_action_view(move |ctx| {
                     let appearance = Appearance::handle(ctx).as_ref(ctx);
                     let options = SingleLineEditorOptions {
-                        is_password: true,
+                        is_password: $is_password,
                         text: TextOptions {
                             font_size_override: Some(appearance.ui_font_size()),
                             font_family_override: Some(appearance.monospace_font_family()),
@@ -6397,6 +6425,7 @@ impl ApiKeysWidget {
             };
         }
 
+        // International providers
         create_api_key_editor!(openai_api_key_editor, openai_key, set_openai_key, "sk-...");
         create_api_key_editor!(
             anthropic_api_key_editor,
@@ -6410,11 +6439,92 @@ impl ApiKeysWidget {
             set_google_key,
             "AIzaSy..."
         );
+        create_api_key_editor!(
+            open_router_api_key_editor,
+            open_router_key,
+            set_open_router_key,
+            "sk-or-..."
+        );
+        create_api_key_editor!(
+            mistral_api_key_editor,
+            mistral_key,
+            set_mistral_key,
+            "..."
+        );
+        // Chinese providers
+        create_api_key_editor!(
+            deepseek_api_key_editor,
+            deepseek_key,
+            set_deepseek_key,
+            "sk-..."
+        );
+        create_api_key_editor!(
+            kimi_api_key_editor,
+            kimi_key,
+            set_kimi_key,
+            "sk-..."
+        );
+        create_api_key_editor!(
+            minimax_api_key_editor,
+            minimax_key,
+            set_minimax_key,
+            "..."
+        );
+        create_api_key_editor!(
+            zhipu_api_key_editor,
+            zhipu_key,
+            set_zhipu_key,
+            "..."
+        );
+        create_api_key_editor!(
+            baidu_api_key_editor,
+            baidu_key,
+            set_baidu_key,
+            "..."
+        );
+        create_api_key_editor!(
+            qwen_api_key_editor,
+            qwen_key,
+            set_qwen_key,
+            "sk-..."
+        );
+        // Custom OpenAI-compatible provider
+        create_api_key_editor!(
+            custom_api_key_editor,
+            custom_api_key_val,
+            set_custom_api_key,
+            "sk-..."
+        );
+        create_api_key_editor!(
+            custom_base_url_editor,
+            custom_base_url_val,
+            set_custom_base_url,
+            "https://api.example.com/v1",
+            false
+        );
+        create_api_key_editor!(
+            custom_provider_name_editor,
+            custom_provider_name_val,
+            set_custom_provider_name,
+            "My Provider",
+            false
+        );
 
         Self {
             openai_api_key_editor,
             anthropic_api_key_editor,
             google_api_key_editor,
+            open_router_api_key_editor,
+            mistral_api_key_editor,
+            deepseek_api_key_editor,
+            kimi_api_key_editor,
+            minimax_api_key_editor,
+            zhipu_api_key_editor,
+            baidu_api_key_editor,
+            qwen_api_key_editor,
+            custom_api_key_editor,
+            custom_base_url_editor,
+            custom_provider_name_editor,
 
             can_use_warp_credits_with_byok: Default::default(),
             upgrade_highlight_index: Default::default(),
@@ -6483,6 +6593,7 @@ impl ApiKeysWidget {
                 .finish()
         }
 
+        // International providers
         column.add_child(render_api_key_input(
             appearance,
             "OpenAI API Key",
@@ -6501,6 +6612,85 @@ impl ApiKeysWidget {
             appearance,
             "Google API Key",
             self.google_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "OpenRouter API Key",
+            self.open_router_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Mistral API Key",
+            self.mistral_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        // Chinese providers
+        column.add_child(render_api_key_input(
+            appearance,
+            "DeepSeek API Key",
+            self.deepseek_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Kimi (Moonshot) API Key",
+            self.kimi_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "MiniMax API Key",
+            self.minimax_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Zhipu (GLM) API Key",
+            self.zhipu_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Baidu (ERNIE) API Key",
+            self.baidu_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Alibaba (Qwen) API Key",
+            self.qwen_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        // Custom OpenAI-compatible provider
+        column.add_child(render_api_key_input(
+            appearance,
+            "Custom Provider Name",
+            self.custom_provider_name_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Custom Provider Base URL",
+            self.custom_base_url_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "Custom Provider API Key",
+            self.custom_api_key_editor.clone(),
             is_enabled,
             app,
         ));
@@ -6600,7 +6790,7 @@ impl SettingsWidget for ApiKeysWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "api keys bring your own byo openai anthropic google claude gemini gpt"
+        "api keys bring your own byo openai anthropic google claude gemini gpt openrouter mistral deepseek kimi moonshot minimax zhipu glm baidu ernie qwen alibaba custom provider"
     }
 
     fn render(

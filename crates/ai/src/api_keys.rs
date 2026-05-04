@@ -18,10 +18,23 @@ pub enum ApiKeyManagerEvent {
 /// users to use their own API keys instead of Warp's.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct ApiKeys {
+    // International providers
     pub google: Option<String>,
     pub anthropic: Option<String>,
     pub openai: Option<String>,
     pub open_router: Option<String>,
+    pub mistral: Option<String>,
+    // Chinese providers
+    pub deepseek: Option<String>,
+    pub kimi: Option<String>,
+    pub minimax: Option<String>,
+    pub zhipu: Option<String>,
+    pub baidu: Option<String>,
+    pub qwen: Option<String>,
+    // Custom OpenAI-compatible provider
+    pub custom_api_key: Option<String>,
+    pub custom_base_url: Option<String>,
+    pub custom_provider_name: Option<String>,
 }
 
 impl ApiKeys {
@@ -30,6 +43,14 @@ impl ApiKeys {
             || self.anthropic.is_some()
             || self.google.is_some()
             || self.open_router.is_some()
+            || self.mistral.is_some()
+            || self.deepseek.is_some()
+            || self.kimi.is_some()
+            || self.minimax.is_some()
+            || self.zhipu.is_some()
+            || self.baidu.is_some()
+            || self.qwen.is_some()
+            || self.custom_api_key.is_some()
     }
 }
 
@@ -89,6 +110,66 @@ impl ApiKeyManager {
 
     pub fn set_open_router_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
         self.keys.open_router = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_mistral_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.mistral = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_deepseek_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.deepseek = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_kimi_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.kimi = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_minimax_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.minimax = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_zhipu_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.zhipu = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_baidu_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.baidu = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_qwen_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.qwen = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_custom_api_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.custom_api_key = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_custom_base_url(&mut self, url: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.custom_base_url = url;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_custom_provider_name(&mut self, name: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.custom_provider_name = name;
         ctx.emit(ApiKeyManagerEvent::KeysUpdated);
         self.write_keys_to_secure_storage(ctx);
     }
