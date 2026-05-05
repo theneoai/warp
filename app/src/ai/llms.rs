@@ -36,7 +36,16 @@ pub fn is_using_api_key_for_provider(provider: &LLMProvider, app: &AppContext) -
         LLMProvider::OpenAI => api_keys.is_some_and(|keys| keys.openai.is_some()),
         LLMProvider::Anthropic => api_keys.is_some_and(|keys| keys.anthropic.is_some()),
         LLMProvider::Google => api_keys.is_some_and(|keys| keys.google.is_some()),
-        _ => false,
+        LLMProvider::OpenRouter => api_keys.is_some_and(|keys| keys.open_router.is_some()),
+        LLMProvider::Mistral => api_keys.is_some_and(|keys| keys.mistral.is_some()),
+        LLMProvider::DeepSeek => api_keys.is_some_and(|keys| keys.deepseek.is_some()),
+        LLMProvider::Kimi => api_keys.is_some_and(|keys| keys.kimi.is_some()),
+        LLMProvider::MiniMax => api_keys.is_some_and(|keys| keys.minimax.is_some()),
+        LLMProvider::Zhipu => api_keys.is_some_and(|keys| keys.zhipu.is_some()),
+        LLMProvider::Baidu => api_keys.is_some_and(|keys| keys.baidu.is_some()),
+        LLMProvider::Qwen => api_keys.is_some_and(|keys| keys.qwen.is_some()),
+        LLMProvider::Custom => api_keys.is_some_and(|keys| keys.custom_api_key.is_some()),
+        LLMProvider::Xai | LLMProvider::Unknown => false,
     }
 }
 
@@ -89,6 +98,15 @@ pub enum LLMProvider {
     Anthropic,
     Google,
     Xai,
+    OpenRouter,
+    Mistral,
+    DeepSeek,
+    Kimi,
+    MiniMax,
+    Zhipu,
+    Baidu,
+    Qwen,
+    Custom,
     Unknown,
 }
 
@@ -99,8 +117,36 @@ impl LLMProvider {
             LLMProvider::OpenAI => Some(Icon::OpenAILogo),
             LLMProvider::Anthropic => Some(Icon::ClaudeLogo),
             LLMProvider::Google => Some(Icon::GeminiLogo),
-            LLMProvider::Xai => None,
-            LLMProvider::Unknown => None,
+            LLMProvider::Xai
+            | LLMProvider::OpenRouter
+            | LLMProvider::Mistral
+            | LLMProvider::DeepSeek
+            | LLMProvider::Kimi
+            | LLMProvider::MiniMax
+            | LLMProvider::Zhipu
+            | LLMProvider::Baidu
+            | LLMProvider::Qwen
+            | LLMProvider::Custom
+            | LLMProvider::Unknown => None,
+        }
+    }
+
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            LLMProvider::OpenAI => "OpenAI",
+            LLMProvider::Anthropic => "Anthropic",
+            LLMProvider::Google => "Google",
+            LLMProvider::Xai => "xAI",
+            LLMProvider::OpenRouter => "OpenRouter",
+            LLMProvider::Mistral => "Mistral",
+            LLMProvider::DeepSeek => "DeepSeek",
+            LLMProvider::Kimi => "Kimi (Moonshot)",
+            LLMProvider::MiniMax => "MiniMax",
+            LLMProvider::Zhipu => "Zhipu (GLM)",
+            LLMProvider::Baidu => "Baidu (ERNIE)",
+            LLMProvider::Qwen => "Alibaba (Qwen)",
+            LLMProvider::Custom => "Custom",
+            LLMProvider::Unknown => "Unknown",
         }
     }
 }
