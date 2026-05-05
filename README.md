@@ -31,6 +31,59 @@
 
 You can [download Warp](https://www.warp.dev/download) and [read our docs](https://docs.warp.dev/) for platform-specific instructions.
 
+## Quickstart
+
+**No account or login required.** Launch Warp and you're in — straight to the terminal.
+
+### 1. Download and launch
+
+```bash
+# macOS (Homebrew)
+brew install --cask warp
+
+# Or download directly from https://www.warp.dev/download
+```
+
+Open Warp. It starts immediately without any sign-in step.
+
+### 2. Use the built-in AI agent
+
+Press `Ctrl+I` (or click the Agent icon) to open the AI panel. Ask anything: debug a command, explain output, generate a script, or run a multi-step coding task.
+
+Warp uses its own credits by default — no key needed to get started.
+
+### 3. Bring your own API key (optional)
+
+To use your own model provider instead of Warp's credits, go to **Settings → AI → API Keys** and enter a key for any supported provider:
+
+| Provider | Key format |
+|---|---|
+| OpenAI | `sk-...` |
+| Anthropic | `sk-ant-...` |
+| Google Gemini | `AIzaSy...` |
+| OpenRouter | `sk-or-...` |
+| Mistral | your Mistral key |
+| DeepSeek | `sk-...` |
+| Kimi (Moonshot) | `sk-...` |
+| MiniMax | your MiniMax key |
+| Zhipu (GLM) | your Zhipu key |
+| Baidu (ERNIE) | your Baidu key |
+| Alibaba (Qwen) | `sk-...` |
+| Custom (OpenAI-compatible) | any base URL + key |
+
+Keys are stored securely in your OS keychain and never sent to Warp's servers.
+
+### 4. Bring your own CLI agent (optional)
+
+Warp works as a host for any CLI agent. Run Claude Code, Codex, Gemini CLI, or any other agent directly inside Warp and get native UI: inline diffs, permission prompts, structured output, and session replay.
+
+```bash
+# Example: run Claude Code inside Warp
+claude
+```
+
+That's it. See [docs.warp.dev](https://docs.warp.dev) for the full feature guide.
+
 ## Warp Contributions Overview Dashboard
 
 Explore [build.warp.dev](https://build.warp.dev) to:
