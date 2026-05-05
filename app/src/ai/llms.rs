@@ -40,7 +40,9 @@ pub fn is_using_api_key_for_provider(provider: &LLMProvider, app: &AppContext) -
         LLMProvider::Mistral => api_keys.is_some_and(|keys| keys.mistral.is_some()),
         LLMProvider::DeepSeek => api_keys.is_some_and(|keys| keys.deepseek.is_some()),
         LLMProvider::Kimi => api_keys.is_some_and(|keys| keys.kimi.is_some()),
+        LLMProvider::KimiCoding => api_keys.is_some_and(|keys| keys.kimi_coding.is_some()),
         LLMProvider::MiniMax => api_keys.is_some_and(|keys| keys.minimax.is_some()),
+        LLMProvider::MinimaxCN => api_keys.is_some_and(|keys| keys.minimax_cn.is_some()),
         LLMProvider::Zhipu => api_keys.is_some_and(|keys| keys.zhipu.is_some()),
         LLMProvider::Baidu => api_keys.is_some_and(|keys| keys.baidu.is_some()),
         LLMProvider::Qwen => api_keys.is_some_and(|keys| keys.qwen.is_some()),
@@ -102,7 +104,9 @@ pub enum LLMProvider {
     Mistral,
     DeepSeek,
     Kimi,
+    KimiCoding,
     MiniMax,
+    MinimaxCN,
     Zhipu,
     Baidu,
     Qwen,
@@ -122,7 +126,9 @@ impl LLMProvider {
             | LLMProvider::Mistral
             | LLMProvider::DeepSeek
             | LLMProvider::Kimi
+            | LLMProvider::KimiCoding
             | LLMProvider::MiniMax
+            | LLMProvider::MinimaxCN
             | LLMProvider::Zhipu
             | LLMProvider::Baidu
             | LLMProvider::Qwen
@@ -141,7 +147,9 @@ impl LLMProvider {
             LLMProvider::Mistral => "Mistral",
             LLMProvider::DeepSeek => "DeepSeek",
             LLMProvider::Kimi => "Kimi (Moonshot)",
+            LLMProvider::KimiCoding => "Kimi Coding",
             LLMProvider::MiniMax => "MiniMax",
+            LLMProvider::MinimaxCN => "MiniMax (China)",
             LLMProvider::Zhipu => "Zhipu (GLM)",
             LLMProvider::Baidu => "Baidu (ERNIE)",
             LLMProvider::Qwen => "Alibaba (Qwen)",

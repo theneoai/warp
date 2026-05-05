@@ -25,7 +25,9 @@ pub struct ApiKeys {
     pub mistral: Option<String>,
     pub deepseek: Option<String>,
     pub kimi: Option<String>,
+    pub kimi_coding: Option<String>,
     pub minimax: Option<String>,
+    pub minimax_cn: Option<String>,
     pub zhipu: Option<String>,
     pub baidu: Option<String>,
     pub qwen: Option<String>,
@@ -43,7 +45,9 @@ impl ApiKeys {
             || self.mistral.is_some()
             || self.deepseek.is_some()
             || self.kimi.is_some()
+            || self.kimi_coding.is_some()
             || self.minimax.is_some()
+            || self.minimax_cn.is_some()
             || self.zhipu.is_some()
             || self.baidu.is_some()
             || self.qwen.is_some()
@@ -129,8 +133,20 @@ impl ApiKeyManager {
         self.write_keys_to_secure_storage(ctx);
     }
 
+    pub fn set_kimi_coding_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.kimi_coding = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
     pub fn set_minimax_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
         self.keys.minimax = key;
+        ctx.emit(ApiKeyManagerEvent::KeysUpdated);
+        self.write_keys_to_secure_storage(ctx);
+    }
+
+    pub fn set_minimax_cn_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
+        self.keys.minimax_cn = key;
         ctx.emit(ApiKeyManagerEvent::KeysUpdated);
         self.write_keys_to_secure_storage(ctx);
     }
