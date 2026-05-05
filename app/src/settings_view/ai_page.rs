@@ -6304,20 +6304,17 @@ impl SettingsWidget for CloudAgentComputerUseWidget {
 }
 
 struct ApiKeysWidget {
-    // International providers
     openai_api_key_editor: ViewHandle<EditorView>,
     anthropic_api_key_editor: ViewHandle<EditorView>,
     google_api_key_editor: ViewHandle<EditorView>,
     open_router_api_key_editor: ViewHandle<EditorView>,
     mistral_api_key_editor: ViewHandle<EditorView>,
-    // Chinese providers
     deepseek_api_key_editor: ViewHandle<EditorView>,
     kimi_api_key_editor: ViewHandle<EditorView>,
     minimax_api_key_editor: ViewHandle<EditorView>,
     zhipu_api_key_editor: ViewHandle<EditorView>,
     baidu_api_key_editor: ViewHandle<EditorView>,
     qwen_api_key_editor: ViewHandle<EditorView>,
-    // Custom OpenAI-compatible provider
     custom_api_key_editor: ViewHandle<EditorView>,
     custom_base_url_editor: ViewHandle<EditorView>,
     custom_provider_name_editor: ViewHandle<EditorView>,
@@ -6352,7 +6349,6 @@ impl ApiKeysWidget {
 
         // A helper macro to create and configure an API key editor.  This avoids a lot
         // of code duplication and ensures consistency between the editors.
-        // Use is_password=true for sensitive keys and false for plain-text fields.
         macro_rules! create_api_key_editor {
             ($editor:ident, $key:ident, $set_func:ident, $placeholder:literal) => {
                 create_api_key_editor!($editor, $key, $set_func, $placeholder, true)
@@ -6425,7 +6421,6 @@ impl ApiKeysWidget {
             };
         }
 
-        // International providers
         create_api_key_editor!(openai_api_key_editor, openai_key, set_openai_key, "sk-...");
         create_api_key_editor!(
             anthropic_api_key_editor,
@@ -6451,7 +6446,6 @@ impl ApiKeysWidget {
             set_mistral_key,
             "..."
         );
-        // Chinese providers
         create_api_key_editor!(
             deepseek_api_key_editor,
             deepseek_key,
@@ -6488,7 +6482,6 @@ impl ApiKeysWidget {
             set_qwen_key,
             "sk-..."
         );
-        // Custom OpenAI-compatible provider
         create_api_key_editor!(
             custom_api_key_editor,
             custom_api_key_val,
@@ -6593,7 +6586,6 @@ impl ApiKeysWidget {
                 .finish()
         }
 
-        // International providers
         column.add_child(render_api_key_input(
             appearance,
             "OpenAI API Key",
@@ -6629,7 +6621,6 @@ impl ApiKeysWidget {
             is_enabled,
             app,
         ));
-        // Chinese providers
         column.add_child(render_api_key_input(
             appearance,
             "DeepSeek API Key",
@@ -6672,7 +6663,6 @@ impl ApiKeysWidget {
             is_enabled,
             app,
         ));
-        // Custom OpenAI-compatible provider
         column.add_child(render_api_key_input(
             appearance,
             "Custom Provider Name",

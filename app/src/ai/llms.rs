@@ -94,21 +94,18 @@ pub struct LLMSpec {
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum LLMProvider {
-    // International providers
     OpenAI,
     Anthropic,
     Google,
     Xai,
     OpenRouter,
     Mistral,
-    // Chinese providers
     DeepSeek,
     Kimi,
     MiniMax,
     Zhipu,
     Baidu,
     Qwen,
-    // Generic custom provider
     Custom,
     Unknown,
 }
@@ -134,7 +131,6 @@ impl LLMProvider {
         }
     }
 
-    /// Returns the display name for the provider.
     pub fn display_name(&self) -> &'static str {
         match self {
             LLMProvider::OpenAI => "OpenAI",

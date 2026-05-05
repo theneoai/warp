@@ -18,20 +18,17 @@ pub enum ApiKeyManagerEvent {
 /// users to use their own API keys instead of Warp's.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct ApiKeys {
-    // International providers
     pub google: Option<String>,
     pub anthropic: Option<String>,
     pub openai: Option<String>,
     pub open_router: Option<String>,
     pub mistral: Option<String>,
-    // Chinese providers
     pub deepseek: Option<String>,
     pub kimi: Option<String>,
     pub minimax: Option<String>,
     pub zhipu: Option<String>,
     pub baidu: Option<String>,
     pub qwen: Option<String>,
-    // Custom OpenAI-compatible provider
     pub custom_api_key: Option<String>,
     pub custom_base_url: Option<String>,
     pub custom_provider_name: Option<String>,
