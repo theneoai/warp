@@ -1912,10 +1912,20 @@ type LlmPricing {
 
 enum LlmProvider {
   ANTHROPIC
+  BAIDU
+  DEEPSEEK
   GOOGLE
+  KIMI
+  KIMI_CODING
+  MINIMAX
+  MINIMAX_CN
+  MISTRAL
   OPENAI
+  OPENROUTER
+  QWEN
   UNKNOWN
   XAI
+  ZHIPU
 }
 
 type LlmSettings {

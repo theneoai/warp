@@ -14,6 +14,14 @@ pub async fn generate_multi_agent_output(
     mut params: RequestParams,
     cancellation_rx: futures::channel::oneshot::Receiver<()>,
 ) -> Result<ResponseStream, ConvertToAPITypeError> {
+    if let Some(direct_config) = params.direct_api_config.take() {
+        let model_id = params.model.to_string();
+        let stream =
+            crate::ai::direct_api::generate(params.input, params.tasks, direct_config, &model_id)
+                .await;
+        return Ok(Box::pin(stream.take_until(cancellation_rx)));
+    }
+
     let supported_tools = params
         .supported_tools_override
         .take()

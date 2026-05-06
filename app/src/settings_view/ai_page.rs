@@ -6311,7 +6311,9 @@ struct ApiKeysWidget {
     mistral_api_key_editor: ViewHandle<EditorView>,
     deepseek_api_key_editor: ViewHandle<EditorView>,
     kimi_api_key_editor: ViewHandle<EditorView>,
+    kimi_coding_api_key_editor: ViewHandle<EditorView>,
     minimax_api_key_editor: ViewHandle<EditorView>,
+    minimax_cn_api_key_editor: ViewHandle<EditorView>,
     zhipu_api_key_editor: ViewHandle<EditorView>,
     baidu_api_key_editor: ViewHandle<EditorView>,
     qwen_api_key_editor: ViewHandle<EditorView>,
@@ -6338,7 +6340,9 @@ impl ApiKeysWidget {
             mistral: mistral_key,
             deepseek: deepseek_key,
             kimi: kimi_key,
+            kimi_coding: kimi_coding_key,
             minimax: minimax_key,
+            minimax_cn: minimax_cn_key,
             zhipu: zhipu_key,
             baidu: baidu_key,
             qwen: qwen_key,
@@ -6459,9 +6463,21 @@ impl ApiKeysWidget {
             "sk-..."
         );
         create_api_key_editor!(
+            kimi_coding_api_key_editor,
+            kimi_coding_key,
+            set_kimi_coding_key,
+            "sk-kimi-..."
+        );
+        create_api_key_editor!(
             minimax_api_key_editor,
             minimax_key,
             set_minimax_key,
+            "..."
+        );
+        create_api_key_editor!(
+            minimax_cn_api_key_editor,
+            minimax_cn_key,
+            set_minimax_cn_key,
             "..."
         );
         create_api_key_editor!(
@@ -6511,7 +6527,9 @@ impl ApiKeysWidget {
             mistral_api_key_editor,
             deepseek_api_key_editor,
             kimi_api_key_editor,
+            kimi_coding_api_key_editor,
             minimax_api_key_editor,
+            minimax_cn_api_key_editor,
             zhipu_api_key_editor,
             baidu_api_key_editor,
             qwen_api_key_editor,
@@ -6637,8 +6655,22 @@ impl ApiKeysWidget {
         ));
         column.add_child(render_api_key_input(
             appearance,
+            "Kimi Coding API Key (api.kimi.com)",
+            self.kimi_coding_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
             "MiniMax API Key",
             self.minimax_api_key_editor.clone(),
+            is_enabled,
+            app,
+        ));
+        column.add_child(render_api_key_input(
+            appearance,
+            "MiniMax (China) API Key (api.minimaxi.com)",
+            self.minimax_cn_api_key_editor.clone(),
             is_enabled,
             app,
         ));
@@ -6780,7 +6812,7 @@ impl SettingsWidget for ApiKeysWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "api keys bring your own byo openai anthropic google claude gemini gpt openrouter mistral deepseek kimi moonshot minimax zhipu glm baidu ernie qwen alibaba custom provider"
+        "api keys bring your own byo openai anthropic google claude gemini gpt openrouter mistral deepseek kimi moonshot kimi coding minimax minimax china cn zhipu glm baidu ernie qwen alibaba custom provider"
     }
 
     fn render(

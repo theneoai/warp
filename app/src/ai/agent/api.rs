@@ -130,6 +130,8 @@ pub struct RequestParams {
     pub parent_agent_id: Option<String>,
     /// The display name for this agent (e.g. "Agent 1"), assigned by the orchestrator.
     pub agent_name: Option<String>,
+    /// When set, the request is routed directly to the provider's API instead of the Warp server.
+    pub direct_api_config: Option<crate::ai::direct_api::DirectApiConfig>,
 }
 
 pub type Event = Result<warp_multi_agent_api::ResponseEvent, Arc<AIApiError>>;
@@ -301,6 +303,29 @@ impl RequestParams {
                 })
         };
 
+        let direct_api_config = {
+            use crate::ai::direct_api::{DirectApiConfig, DirectApiKind};
+            use crate::ai::llms::LLMProvider;
+
+            let stored_keys = ApiKeyManager::as_ref(app).keys();
+            let kimi_coding_key = stored_keys.kimi_coding.clone();
+            let minimax_cn_key = stored_keys.minimax_cn.clone();
+            drop(stored_keys);
+            crate::ai::llms::LLMPreferences::as_ref(app)
+                .get_llm_info(&request_input.model_id)
+                .and_then(|info| match &info.provider {
+                    LLMProvider::KimiCoding => kimi_coding_key.map(|key| DirectApiConfig {
+                        kind: DirectApiKind::KimiCoding,
+                        api_key: key,
+                    }),
+                    LLMProvider::MinimaxCN => minimax_cn_key.map(|key| DirectApiConfig {
+                        kind: DirectApiKind::MinimaxCN,
+                        api_key: key,
+                    }),
+                    _ => None,
+                })
+        };
+
         Self {
             input: request_input.all_inputs().cloned().collect(),
             conversation_token: conversation.server_conversation_token,
@@ -332,6 +357,7 @@ impl RequestParams {
             supported_tools_override: request_input.supported_tools_override.clone(),
             parent_agent_id: None,
             agent_name: None,
+            direct_api_config,
         }
     }
 }
