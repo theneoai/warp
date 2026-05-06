@@ -9,6 +9,9 @@
 use std::sync::Arc;
 
 use serde_json::{json, Value};
+
+static HTTP_CLIENT: std::sync::LazyLock<http_client::Client> =
+    std::sync::LazyLock::new(http_client::Client::new);
 use uuid::Uuid;
 use warp_multi_agent_api::{
     self as api,
@@ -23,14 +26,10 @@ use crate::server::server_api::AIApiError;
 pub mod anthropic;
 pub mod openai;
 
-// ── Provider config ──────────────────────────────────────────────────────────
-
 #[derive(Clone, Debug)]
 pub struct DirectApiConfig {
     pub kind: DirectApiKind,
     pub api_key: String,
-    /// Model ID passed verbatim to the provider's API.
-    pub model_id: String,
 }
 
 #[derive(Clone, Debug)]
@@ -50,33 +49,33 @@ impl DirectApiKind {
     }
 }
 
-// ── Public entry point ────────────────────────────────────────────────────────
-
 pub type Event = Result<ResponseEvent, Arc<AIApiError>>;
 
-/// Make a direct API call and return a stream of `ResponseEvent`s compatible
-/// with the rest of the agent pipeline.
 pub async fn generate(
     inputs: Vec<AIAgentInput>,
     tasks: Vec<api::Task>,
     config: DirectApiConfig,
+    model_id: &str,
 ) -> impl futures_util::Stream<Item = Event> + Send + 'static {
-    let model_id = if config.model_id.is_empty() {
+    let model_id = if model_id.is_empty() {
         config.kind.default_model().to_string()
     } else {
-        config.model_id.clone()
+        model_id.to_string()
     };
 
     let messages = build_messages(&tasks, &inputs);
 
     let result = match &config.kind {
-        DirectApiKind::KimiCoding => anthropic::call(&config.api_key, &model_id, messages).await,
+        DirectApiKind::KimiCoding => {
+            anthropic::call(&HTTP_CLIENT, &config.api_key, &model_id, messages).await
+        }
         DirectApiKind::MinimaxCN => {
             openai::call(
+                &HTTP_CLIENT,
                 &config.api_key,
                 &model_id,
                 messages,
-                openai::minimax_cn_base_url(),
+                openai::MINIMAX_CN_BASE_URL,
             )
             .await
         }
@@ -103,14 +102,9 @@ pub async fn generate(
     futures_util::stream::iter(events)
 }
 
-// ── Message history conversion ────────────────────────────────────────────────
-
-/// Convert existing task messages + current inputs into the provider's message
-/// array format (OpenAI / Anthropic both accept `[{role, content}]`).
 fn build_messages(tasks: &[api::Task], inputs: &[AIAgentInput]) -> Vec<Value> {
     let mut messages: Vec<Value> = vec![];
 
-    // History from previous conversation turns
     for task in tasks {
         for msg in &task.messages {
             match &msg.message {
@@ -129,7 +123,7 @@ fn build_messages(tasks: &[api::Task], inputs: &[AIAgentInput]) -> Vec<Value> {
         }
     }
 
-    // Current user input
+    // inputs are oldest-to-newest; reverse to find the most recent user-visible query
     for input in inputs.iter().rev() {
         match input {
             AIAgentInput::UserQuery { query, .. }
@@ -138,21 +132,18 @@ fn build_messages(tasks: &[api::Task], inputs: &[AIAgentInput]) -> Vec<Value> {
                 if !query.is_empty() {
                     messages.push(json!({"role": "user", "content": query}));
                     break;
-            }
+                }
             }
             _ => {}
         }
     }
 
-    // Providers require at least one message
     if messages.is_empty() {
         messages.push(json!({"role": "user", "content": ""}));
     }
 
     messages
 }
-
-// ── ResponseEvent builders ────────────────────────────────────────────────────
 
 fn init_event(request_id: &str, conv_id: &str) -> ResponseEvent {
     ResponseEvent {

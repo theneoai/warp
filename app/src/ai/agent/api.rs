@@ -303,26 +303,24 @@ impl RequestParams {
                 })
         };
 
-        // Detect whether to route this request directly to the provider API instead of
-        // through the Warp server.  Requires (a) the model's provider is a direct-API
-        // provider and (b) the user has stored a key for that provider locally.
         let direct_api_config = {
             use crate::ai::direct_api::{DirectApiConfig, DirectApiKind};
             use crate::ai::llms::LLMProvider;
 
-            let keys = ApiKeyManager::as_ref(app).keys().clone();
+            let stored_keys = ApiKeyManager::as_ref(app).keys();
+            let kimi_coding_key = stored_keys.kimi_coding.clone();
+            let minimax_cn_key = stored_keys.minimax_cn.clone();
+            drop(stored_keys);
             crate::ai::llms::LLMPreferences::as_ref(app)
                 .get_llm_info(&request_input.model_id)
                 .and_then(|info| match &info.provider {
-                    LLMProvider::KimiCoding => keys.kimi_coding.map(|key| DirectApiConfig {
+                    LLMProvider::KimiCoding => kimi_coding_key.map(|key| DirectApiConfig {
                         kind: DirectApiKind::KimiCoding,
                         api_key: key,
-                        model_id: request_input.model_id.to_string(),
                     }),
-                    LLMProvider::MinimaxCN => keys.minimax_cn.map(|key| DirectApiConfig {
+                    LLMProvider::MinimaxCN => minimax_cn_key.map(|key| DirectApiConfig {
                         kind: DirectApiKind::MinimaxCN,
                         api_key: key,
-                        model_id: request_input.model_id.to_string(),
                     }),
                     _ => None,
                 })
