@@ -6466,7 +6466,7 @@ impl ApiKeysWidget {
             kimi_coding_api_key_editor,
             kimi_coding_key,
             set_kimi_coding_key,
-            "sk-..."
+            "sk-kimi-..."
         );
         create_api_key_editor!(
             minimax_api_key_editor,
@@ -6655,7 +6655,7 @@ impl ApiKeysWidget {
         ));
         column.add_child(render_api_key_input(
             appearance,
-            "Kimi Coding API Key",
+            "Kimi Coding API Key (api.kimi.com)",
             self.kimi_coding_api_key_editor.clone(),
             is_enabled,
             app,
@@ -6669,7 +6669,7 @@ impl ApiKeysWidget {
         ));
         column.add_child(render_api_key_input(
             appearance,
-            "MiniMax (China) API Key",
+            "MiniMax (China) API Key (api.minimaxi.com)",
             self.minimax_cn_api_key_editor.clone(),
             is_enabled,
             app,

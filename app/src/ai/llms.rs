@@ -149,7 +149,7 @@ impl LLMProvider {
             LLMProvider::Kimi => "Kimi (Moonshot)",
             LLMProvider::KimiCoding => "Kimi Coding",
             LLMProvider::MiniMax => "MiniMax",
-            LLMProvider::MinimaxCN => "MiniMax (China)",
+            LLMProvider::MinimaxCN => "MiniMax (minimaxi.com)",
             LLMProvider::Zhipu => "Zhipu (GLM)",
             LLMProvider::Baidu => "Baidu (ERNIE)",
             LLMProvider::Qwen => "Alibaba (Qwen)",

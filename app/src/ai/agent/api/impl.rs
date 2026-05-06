@@ -14,6 +14,13 @@ pub async fn generate_multi_agent_output(
     mut params: RequestParams,
     cancellation_rx: futures::channel::oneshot::Receiver<()>,
 ) -> Result<ResponseStream, ConvertToAPITypeError> {
+    // Direct API path: bypass the Warp server entirely.
+    if let Some(direct_config) = params.direct_api_config.take() {
+        let stream =
+            crate::ai::direct_api::generate(params.input, params.tasks, direct_config).await;
+        return Ok(Box::pin(stream.take_until(cancellation_rx)));
+    }
+
     let supported_tools = params
         .supported_tools_override
         .take()

@@ -130,6 +130,8 @@ pub struct RequestParams {
     pub parent_agent_id: Option<String>,
     /// The display name for this agent (e.g. "Agent 1"), assigned by the orchestrator.
     pub agent_name: Option<String>,
+    /// When set, the request is routed directly to the provider's API instead of the Warp server.
+    pub direct_api_config: Option<crate::ai::direct_api::DirectApiConfig>,
 }
 
 pub type Event = Result<warp_multi_agent_api::ResponseEvent, Arc<AIApiError>>;
@@ -301,6 +303,31 @@ impl RequestParams {
                 })
         };
 
+        // Detect whether to route this request directly to the provider API instead of
+        // through the Warp server.  Requires (a) the model's provider is a direct-API
+        // provider and (b) the user has stored a key for that provider locally.
+        let direct_api_config = {
+            use crate::ai::direct_api::{DirectApiConfig, DirectApiKind};
+            use crate::ai::llms::LLMProvider;
+
+            let keys = ApiKeyManager::as_ref(app).keys().clone();
+            crate::ai::llms::LLMPreferences::as_ref(app)
+                .get_llm_info(&request_input.model_id)
+                .and_then(|info| match &info.provider {
+                    LLMProvider::KimiCoding => keys.kimi_coding.map(|key| DirectApiConfig {
+                        kind: DirectApiKind::KimiCoding,
+                        api_key: key,
+                        model_id: request_input.model_id.to_string(),
+                    }),
+                    LLMProvider::MinimaxCN => keys.minimax_cn.map(|key| DirectApiConfig {
+                        kind: DirectApiKind::MinimaxCN,
+                        api_key: key,
+                        model_id: request_input.model_id.to_string(),
+                    }),
+                    _ => None,
+                })
+        };
+
         Self {
             input: request_input.all_inputs().cloned().collect(),
             conversation_token: conversation.server_conversation_token,
@@ -332,6 +359,7 @@ impl RequestParams {
             supported_tools_override: request_input.supported_tools_override.clone(),
             parent_agent_id: None,
             agent_name: None,
+            direct_api_config,
         }
     }
 }
