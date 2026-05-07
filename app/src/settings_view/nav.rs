@@ -46,6 +46,12 @@ impl SettingsUmbrella {
         }
     }
 
+    pub fn new_expanded(label: &'static str, subpages: Vec<SettingsSection>) -> Self {
+        let mut umbrella = Self::new(label, subpages);
+        umbrella.expanded = true;
+        umbrella
+    }
+
     pub fn toggle(&mut self) {
         self.expanded = !self.expanded;
     }

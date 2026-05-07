@@ -1184,7 +1184,7 @@ impl SettingsView {
         // with subpages; the actual AI SettingsPage is hidden from direct sidebar listing.
         let mut nav_items = vec![
             SettingsNavItem::Page(SettingsSection::Account),
-            SettingsNavItem::Umbrella(SettingsUmbrella::new(
+            SettingsNavItem::Umbrella(SettingsUmbrella::new_expanded(
                 "Agents",
                 SettingsSection::ai_subpages().to_vec(),
             )),
@@ -1216,11 +1216,14 @@ impl SettingsView {
         ];
 
         // Resolve the initial page: map internal backing-page sections to their default subpage.
+        // When no page is specified, default to WarpAgent (AI settings) so users see AI
+        // configuration immediately rather than the Account page.
         let initial_page = match page {
             Some(SettingsSection::AI) => SettingsSection::WarpAgent,
             Some(SettingsSection::Code) => SettingsSection::CodeIndexing,
             Some(section) if section.is_subpage() => section,
-            other => other.unwrap_or_default(),
+            Some(other) => other,
+            None => SettingsSection::WarpAgent,
         };
 
         // Auto-expand the umbrella if the initial page is one of its subpages.
